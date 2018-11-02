@@ -7,8 +7,7 @@ class HandlerPool
     SafeQueue <MySocket> pendingConns;
     
     volatile boolean running;
-    static const int num_threads = 10;
-	std::thread t[num_threads];
+    static const int num_threads = 1;
 
   public:
     HandlerPool();

@@ -37,11 +37,11 @@ public:
 	while (q.empty())
 	{
 		// release lock as long as the wait and reaquire it afterwards.
-		//c.wait(lock);
+		c.wait(lock);
 		Sleep(500);
-		std::cout << "aa";
+		//std::cout << "aa";
 	}
-	std::cout << "bb";
+	//std::cout << "bb";
 	
     T val = q.front();
     q.pop();

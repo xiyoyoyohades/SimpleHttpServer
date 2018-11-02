@@ -1,26 +1,37 @@
 #pragma once
 
 #include <string>
+#include <ostream>
+#include <fstream>
+#include <sstream>
 using std::string;
 class MySocket
 {
-  private:
+	public:
     int port;
     int socketId;
-    //Socket struct
+	//std::ofstream out;
+	std::stringstream socketStringStream;
+	//stream here
+    
 
-  public:
+  
     MySocket(/* args */);
     MySocket(int af, int type, int protocol);
-
+	MySocket::MySocket(int socketId);
+	MySocket::MySocket(const MySocket &);
     ~MySocket();
     void connect(const string &ipAddr, unsigned short port);
     void bind(unsigned short port);
     void listen(int backlog);
-    void accept(MySocket &SK, struct sockaddr_in *cliAddr = 0);
+    void accept(MySocket& comming);
     void close();
 
     //socket IO
     int read(char *usrbuf, int n);
-    int write(char *usrbuf, int n);
+    int write(const char *usrbuf, int n);
+
+	//stream IO
+	int socketOutFlush();
+	int socketRead();
 };
