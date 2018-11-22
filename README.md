@@ -1,7 +1,7 @@
 # SimpleHttpServer
 **got help from [Z-Y00](https://github.com/Z-Y00)**
 
-**complete version(console only) can be found at [xi-testing](https://github.com/xiyoyoyohades/SimpleHttpServer/tree/xi-testing) brance**
+**complete version(console only, windows only) can be found at [xi-testing](https://github.com/xiyoyoyohades/SimpleHttpServer/tree/xi-testing) brance**
 
 _reference:_
 - https://github.com/chaoswork/httpServer
