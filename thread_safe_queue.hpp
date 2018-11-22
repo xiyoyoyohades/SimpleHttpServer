@@ -7,6 +7,8 @@
 #include <condition_variable>
 #include <iostream>
 
+extern int on;
+
 // A threadsafe-queue.
 template <class T>
 class SafeQueue
@@ -37,15 +39,24 @@ public:
 	while (q.empty())
 	{
 		// release lock as long as the wait and reaquire it afterwards.
+		if (!on) {
+			T v;
+			//printf("interrupt\n");
+			return v;
+		}
 		c.wait(lock);
-		Sleep(500);
-		//std::cout << "aa";
+		//Sleep(500);
 	}
-	//std::cout << "bb";
 	
     T val = q.front();
     q.pop();
     return val;
+  }
+
+  void notify()
+  {
+	  std::lock_guard<std::mutex> lock(m);
+	  c.notify_one();
   }
 
 private:

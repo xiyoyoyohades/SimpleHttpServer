@@ -1,46 +1,44 @@
-#include "stdafx.h"
-#include "headers.hpp"
-#include "socket.hpp"
-#include "HandlerPool.hpp"
-#include "Listener.hpp"
+#include "inc.hpp"
 
-Listener::Listener(unsigned short port)
-{
-	running = true;
-
-	std::thread listenerThread = std::thread(&Listener::Run, this, port); // start it in a thread
-	//Sleep(100000);
-	listenerThread.detach();
+listener::listener(unsigned short port, int thread_num){
+    switcher=1;
+    connect_heap.thread_num=thread_num;
+	//printf("create listener %d \n",port);
+    std::thread wiretapper=std::thread(&listener::start_listen, this, port);
+    wiretapper.detach();
 }
 
-void Listener::Run(unsigned short port)
-{
-    handlerPool.start();
-	//std::cout << "handlerPool start 1";
-	
-    socket.bind(port); // bind to a port
-    socket.listen(50);
-    
-    
-    while (running)
-    {
-		info("Listener waiting");
-		MySocket tmp(-1);
-		//std::cout << "\nListener \n" << tmp.socketId <<" "<< socket.socketId << "\n";
-		socket.accept(tmp);
-		info("Listener get one conn %d", tmp.socketId);
-        handlerPool.addConn(tmp);
-		
+listener::~listener(){}
+
+void listener::start_listen(unsigned short port){
+    socket_wrap* acc=nullptr;
+    connect_heap.init();
+    listen_soc.mybind(port);
+    listen_soc.mylisten(maxwait);
+	printf("[STATUS] listener started, prepare to accept\n");
+    while(switcher){
+        acc=new socket_wrap(-233);
+        listen_soc.myaccept(*acc);
+		try {
+			if (!(acc->socket_id)) throw std::logic_error("[INFO] invalid socket received");
+		}
+		catch(std::logic_error bad_socket){
+			printf("%s\n", bad_socket.what());
+			delete acc;
+			continue;
+		}
+		if (!switcher) break;
+        connect_heap.insert_connect(*acc);
+        delete acc;
+
     }
-	//Sleep(100000);
+	printf("[INFO] listener thread exit\n");
 }
 
-void Listener::doStop()
-{
-    running = false;
-    // close conn here !
-}
-
-Listener::~Listener()
-{
+void listener::close_listener(){
+    listener::switcher=0;
+	listen_soc.myclose();
+	printf("[INFO] listener closed\n");
+	connect_heap.close();
+    //connect_heap.switcher=0;
 }
